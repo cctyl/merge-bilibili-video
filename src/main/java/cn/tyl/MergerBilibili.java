@@ -16,6 +16,7 @@ public class MergerBilibili {
 
     public static void main(String[] args) {
 
+//        String path = "C:\\Users\\tyl-7\\Desktop\\video\\835120";
         String path = "C:\\Users\\tyl-7\\Desktop\\video";
         try {
             getAll(path);
@@ -73,12 +74,11 @@ public class MergerBilibili {
             inputStreamReader = new InputStreamReader(errorStream);
             br = new BufferedReader(inputStreamReader);
 
-           /* // 用来收集错误信息的
+            // 用来收集错误信息的
             String str = "";
             while ((str = br.readLine()) != null) {
                 System.out.println(str);
             }
-*/
             process.waitFor();
 
         } catch (IOException e) {
@@ -110,6 +110,12 @@ public class MergerBilibili {
     }
 
 
+    /**
+     * 获取路径
+     *
+     * @param path
+     * @throws Exception
+     */
     public static void getAll(String path) throws Exception {
 
         String videoInputPath = "";
@@ -150,11 +156,13 @@ public class MergerBilibili {
                             String videoTitle = "p" + fileOne.getName() + "-";
 
 
-
                             //因为要保证先获取到文件名，才能进入下一级文件。而遍历顺序无法保证，所有先拿到视频标题，再进入下一级文件
                             for (File fileTwo : fileTwoList) {
                                 if (fileTwo.getName().equals("entry.json")) {
-                                    videoTitle += getVideoTitleFromJson(fileTwo);
+                                    String partName = getVideoTitleFromJson(fileTwo);
+                                    partName = partName.replaceAll(" ", "_");
+                                    videoTitle += partName;
+
                                     System.out.println(videoTitle);
 
                                 }
@@ -163,9 +171,12 @@ public class MergerBilibili {
                             //设置最终合并文件的位置
                             videoOutPath = outputPath + "\\" + videoTitle + ".mp4";
 
+
                             for (File fileTwo : fileTwoList) {
                                 if (fileTwo.isDirectory()) {
-                                    //来到三级目录，里面存放的是 audio.m4s 和 video.m4s
+
+
+                                    //来到三级目录，里面存放的是 audio.m4s 和 video.m4sk
                                     File[] fileThreeList = fileTwo.listFiles();
 
                                     for (File fileThree : fileThreeList) {
@@ -200,15 +211,13 @@ public class MergerBilibili {
                                     }
 
 
-
-
                                     System.out.println("视频所在目录：" + audioInputPath);
                                     System.out.println("音频所在目录：" + videoInputPath);
                                     System.out.println("视频输出目录：" + videoOutPath);
 
-                                    //开始合成
-//                                                if (!videoInputPath.equals(""))
-//                                                    convetor(videoInputPath, audioInputPath, videoOutPath);
+//                                    //开始合成
+                                    if (!videoInputPath.equals(""))
+                                        convetor(videoInputPath, audioInputPath, videoOutPath);
 
 
                                 }
@@ -224,43 +233,6 @@ public class MergerBilibili {
 
         }
     }
-
-
-
-
-/*
-        if (file.isDirectory()) {       //如果是文件夹，就进行下一步遍历。如果不是就什么也不做
-
-
-            File[] files = file.listFiles();//获取资源文件夹下的所有文件 、文件夹
-
-            for (File f : files) {
-
-                getAll(f.getPath());
-                if (f.isFile()) {
-
-                    if (f.getName().endsWith(".m4s")) {
-
-                        if (f.getName().endsWith("audio.m4s"))
-                            audioInputPath = file.getPath() + "\\audio.m4s";
-                        if (f.getName().endsWith("video.m4s"))
-                            videoInputPath = file.getPath() + "\\video.m4s";
-                        videoOutPath = file.getPath() + "\\all.mp4";
-
-
-                        if (!videoInputPath.equals(""))
-                            convetor(videoInputPath, audioInputPath, videoOutPath);
-
-                    }
-
-                }
-
-
-            }
-
-        }
-
-*/
 
 
     /**
@@ -306,4 +278,6 @@ public class MergerBilibili {
 
         return absolutePath;
     }
+
+
 }
