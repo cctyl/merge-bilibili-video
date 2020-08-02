@@ -12,7 +12,7 @@
  
 ![Image text](./img/direcotryOne.png)
 ![Image text](./img/direcotryTwo.png)
-![Image text](./img/direcotryThree.png)
+![Image text](./img/direcotryThree.png)~~~~~~~~
 
         
                 

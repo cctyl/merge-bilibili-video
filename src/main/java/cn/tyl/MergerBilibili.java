@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONReader;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.Date;
 
 
@@ -35,6 +36,7 @@ public class MergerBilibili {
 
 
     private static int count = 1;
+
     /**
      * 具体合成视频函数
      *
@@ -45,7 +47,7 @@ public class MergerBilibili {
     public static void convetor(String videoInputPath, String audioInputPath, String videoOutPath) throws Exception {
 
         Date startTime = DateUtil.date();
-        System.out.println("开始合并第"+(count++)+"个视频");
+        System.out.println("开始合并第" + (count++) + "个视频");
 
         Process process = null;
 
@@ -104,10 +106,8 @@ public class MergerBilibili {
         }
         Date endTime = DateUtil.date();
         long interval = DateUtil.between(startTime, endTime, DateUnit.SECOND);
-        System.out.println("合并完成，共花费"+interval+"秒");
+        System.out.println("合并完成，共花费" + interval + "秒");
     }
-
-
 
 
     public static void getAll(String path) throws Exception {
@@ -129,27 +129,103 @@ public class MergerBilibili {
          */
 
 
-        if(file.isDirectory()){
+        if (file.isDirectory()) {
             //来到根目录，获取各个系列视频
-
             File[] fileTopList = file.listFiles();
 
+            loop01:
             for (File fileTop : fileTopList) {
 
-                if (fileTop.isDirectory()){
-                    //来到二级目录，拿到所有文件
-                    //拿到entry.json
-                    File[] fileTwoList = fileTop.listFiles();
-                    for (File fileTwo : fileTwoList) {
-                        if (fileTwo.getName().equals("entry.json")){
+                if (fileTop.isDirectory()) {
+                    String outputPath = getOutputPath(fileTop);
+                    //来到一级目录
+                    File[] fileOneList = fileTop.listFiles();
+                    for (File fileOne : fileOneList) {
+
+                        if (fileOne.isDirectory()) {
+
+                            //来到二级目录，拿到所有文件
+                            //拿到entry.json
+                            File[] fileTwoList = fileOne.listFiles();
+                            String videoTitle = "p" + fileOne.getName() + "-";
+
+
+
+                            //因为要保证先获取到文件名，才能进入下一级文件。而遍历顺序无法保证，所有先拿到视频标题，再进入下一级文件
+                            for (File fileTwo : fileTwoList) {
+                                if (fileTwo.getName().equals("entry.json")) {
+                                    videoTitle += getVideoTitleFromJson(fileTwo);
+                                    System.out.println(videoTitle);
+
+                                }
+                            }
+
+                            //设置最终合并文件的位置
+                            videoOutPath = outputPath + "\\" + videoTitle + ".mp4";
+
+                            for (File fileTwo : fileTwoList) {
+                                if (fileTwo.isDirectory()) {
+                                    //来到三级目录，里面存放的是 audio.m4s 和 video.m4s
+                                    File[] fileThreeList = fileTwo.listFiles();
+
+                                    for (File fileThree : fileThreeList) {
+
+                                        if (fileThree.isFile()) {
+
+                                            if (fileThree.getName().endsWith(".blv")) {
+
+
+                                                FileChannel input = null;
+                                                FileChannel output = null;
+
+
+                                                input = new FileInputStream(fileThree).getChannel();
+                                                output = new FileOutputStream(new File(videoOutPath)).getChannel();
+                                                output.transferFrom(input, 0, input.size());
+
+
+                                                continue loop01;
+                                            }
+                                            if (fileThree.getName().endsWith(".m4s")) {
+
+                                                if (fileThree.getName().endsWith("audio.m4s"))
+                                                    //设置音频文件的位置
+                                                    audioInputPath = fileThree.getAbsolutePath();
+                                                if (fileThree.getName().endsWith("video.m4s"))
+                                                    //设置视频文件的位置
+                                                    videoInputPath = fileThree.getAbsolutePath();
+                                            }
+                                        }
+
+                                    }
+
+
+
+
+                                    System.out.println("视频所在目录：" + audioInputPath);
+                                    System.out.println("音频所在目录：" + videoInputPath);
+                                    System.out.println("视频输出目录：" + videoOutPath);
+
+                                    //开始合成
+//                                                if (!videoInputPath.equals(""))
+//                                                    convetor(videoInputPath, audioInputPath, videoOutPath);
+
+
+                                }
+                            }
+
 
                         }
                     }
-
                 }
+                System.out.println("----------------视频：" + fileTop.getName() + "已经遍历完成--------------------");
             }
 
+
         }
+    }
+
+
 
 
 /*
@@ -186,20 +262,19 @@ public class MergerBilibili {
 
 */
 
-    }
-
 
     /**
      * 返回这个视频的标题
+     *
      * @param file
      * @return
      */
-    public static String getVideoTitleFromJson(File file){
-        String part =null;
+    public static String getVideoTitleFromJson(File file) {
+        String part = null;
         try {
             InputStream inputStream = new FileInputStream(file);
-            EntryBean entryBean = (EntryBean)JSONObject.parseObject(inputStream, EntryBean.class);
-            System.out.println(entryBean);
+            EntryBean entryBean = (EntryBean) JSONObject.parseObject(inputStream, EntryBean.class);
+//            System.out.println(entryBean);
             part = entryBean.getPage_data().getPart();
 
 
@@ -210,5 +285,25 @@ public class MergerBilibili {
 
         }
         return part;
+    }
+
+
+    /**
+     * 根据一级目录的路径，创建一个输出文件夹
+     *
+     * @param file
+     * @return
+     */
+    public static String getOutputPath(File file) {
+
+        String absolutePath = file.getAbsolutePath();
+        absolutePath += "\\output";
+
+        File outputPath = new File(absolutePath);
+        if (!outputPath.exists()) {
+            outputPath.mkdirs();
+        }
+
+        return absolutePath;
     }
 }
