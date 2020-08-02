@@ -2,6 +2,9 @@ package cn.tyl;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.tyl.entity.EntryBean;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONReader;
 
 import java.io.*;
 import java.util.Date;
@@ -106,7 +109,7 @@ public class MergerBilibili {
 
 
 
-    // 递归函数
+
     public static void getAll(String path) throws Exception {
 
         String videoInputPath = "";
@@ -114,7 +117,42 @@ public class MergerBilibili {
         String videoOutPath = "";
 
         File file = new File(path);     //资源文件所在路径
+        /*
+            第一层循环，打开一个视频系列
 
+            第二层循环，打开一个分p，并且读取出分p名称
+
+            第三层循环，打开音视频文件，获得路径，开始合并
+
+
+
+         */
+
+
+        if(file.isDirectory()){
+            //来到根目录，获取各个系列视频
+
+            File[] fileTopList = file.listFiles();
+
+            for (File fileTop : fileTopList) {
+
+                if (fileTop.isDirectory()){
+                    //来到二级目录，拿到所有文件
+                    //拿到entry.json
+                    File[] fileTwoList = fileTop.listFiles();
+                    for (File fileTwo : fileTwoList) {
+                        if (fileTwo.getName().equals("entry.json")){
+
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+
+/*
         if (file.isDirectory()) {       //如果是文件夹，就进行下一步遍历。如果不是就什么也不做
 
 
@@ -146,7 +184,31 @@ public class MergerBilibili {
 
         }
 
+*/
+
+    }
 
 
+    /**
+     * 返回这个视频的标题
+     * @param file
+     * @return
+     */
+    public static String getVideoTitleFromJson(File file){
+        String part =null;
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            EntryBean entryBean = (EntryBean)JSONObject.parseObject(inputStream, EntryBean.class);
+            System.out.println(entryBean);
+            part = entryBean.getPage_data().getPart();
+
+
+        } catch (IOException e) {
+            System.out.println("找不到这个文件");
+
+            e.printStackTrace();
+
+        }
+        return part;
     }
 }
