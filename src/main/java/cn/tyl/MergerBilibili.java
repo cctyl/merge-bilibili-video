@@ -2,6 +2,7 @@ package cn.tyl;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.tyl.entity.ConfigProperties;
 import cn.tyl.entity.EntryBean;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONReader;
@@ -13,11 +14,28 @@ import java.util.Date;
 
 public class MergerBilibili {
 
+    private static ConfigProperties configProperties;
+
+    static{
+
+        String fileName = MergerBilibili.class.getClassLoader().getResource("config.json").getPath();
+        //关联文件
+        try {
+            InputStream inputStream = new FileInputStream(fileName);
+            configProperties = (ConfigProperties) JSONObject.parseObject(inputStream, ConfigProperties.class);
+        } catch (FileNotFoundException e) {
+            System.out.println("配置文件找不到");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("配置文件找不到");
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
 
-//        String path = "C:\\Users\\tyl-7\\Desktop\\video\\835120";
-        String path = "C:\\Users\\tyl-7\\Desktop\\video";
+
+        String path = configProperties.getRootPath();
         try {
             getAll(path);
         } catch (Exception e) {
@@ -32,7 +50,6 @@ public class MergerBilibili {
      */
 
     // FFmpeg全路径
-
     private static final String FFMPEG_PATH = "E:\\ffmpeg\\bin\\ffmpeg.exe";
 
 

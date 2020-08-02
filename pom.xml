@@ -56,7 +56,7 @@
                     <!--这部分可有可无,加上的话则直接生成可运行jar包-->
                     <archive>
                         <manifest>
-                            <mainClass>cn.tyl.tenda.Post</mainClass>
+                            <mainClass>cn.tyl.MergerBilibili</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
