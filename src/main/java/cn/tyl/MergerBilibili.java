@@ -15,6 +15,8 @@ import java.util.Date;
 public class MergerBilibili {
 
     private static ConfigProperties configProperties;
+    // FFmpeg全路径
+    private static final String FFMPEG_PATH = "E:\\ffmpeg\\bin\\ffmpeg.exe";
 
     static {
 
@@ -43,6 +45,9 @@ public class MergerBilibili {
         }
 
 
+
+
+
         try {
             getAll(path);
         } catch (Exception e) {
@@ -52,12 +57,8 @@ public class MergerBilibili {
     }
 
 
-    /**
-     * 视频中获取音频文件
-     */
 
-    // FFmpeg全路径
-    private static final String FFMPEG_PATH = "E:\\ffmpeg\\bin\\ffmpeg.exe";
+
 
 
     private static int count = 1;
@@ -85,7 +86,7 @@ public class MergerBilibili {
         try {
 
             // ffmpeg命令
-            String command = FFMPEG_PATH + " -i " + videoInputPath + " -i " + audioInputPath
+            String command = "ffmpeg" + " -i " + videoInputPath + " -i " + audioInputPath
                     + " -c:v copy -c:a aac -strict experimental " +
 
                     " -map 0:v:0 -map 1:a:0 "

@@ -18,7 +18,7 @@
 
 
 使用方法：
-    在
+    1.必须安装 ffmpeg ，默认路径是 E:\ffmpeg\bin\ffmpeg.exe
 
         
                 
