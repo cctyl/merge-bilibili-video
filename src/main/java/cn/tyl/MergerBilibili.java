@@ -15,8 +15,6 @@ import java.util.Date;
 public class MergerBilibili {
 
     private static ConfigProperties configProperties;
-    // FFmpeg全路径
-    private static final String FFMPEG_PATH = "E:\\ffmpeg\\bin\\ffmpeg.exe";
 
     static {
 
@@ -37,12 +35,17 @@ public class MergerBilibili {
     public static void main(String[] args) {
 
         String path = "";
-        if(args[0].equals("")||args[0]==null){
-            path =  configProperties.getRootPath();
+        if (args.length>0){
+            if(!args[0].equals("")||args[0]!=null) {
+
+
+                path = args[0];
+                System.out.println(path);
+            }
         }else {
-            path =args[0];
-            System.out.println(path);
+            path = configProperties.getRootPath();
         }
+
 
 
 
