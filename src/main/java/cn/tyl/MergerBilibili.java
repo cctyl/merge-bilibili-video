@@ -16,12 +16,12 @@ public class MergerBilibili {
 
     private static ConfigProperties configProperties;
 
-    static{
+    static {
 
-        String fileName = MergerBilibili.class.getClassLoader().getResource("config.json").getPath();
+
         //关联文件
         try {
-            InputStream inputStream = new FileInputStream(fileName);
+            InputStream inputStream = MergerBilibili.class.getClass().getResourceAsStream("/config.json");
             configProperties = (ConfigProperties) JSONObject.parseObject(inputStream, ConfigProperties.class);
         } catch (FileNotFoundException e) {
             System.out.println("配置文件找不到");
@@ -34,8 +34,15 @@ public class MergerBilibili {
 
     public static void main(String[] args) {
 
+        String path = "";
+        if(args[0].equals("")||args[0]==null){
+            path =  configProperties.getRootPath();
+        }else {
+            path =args[0];
+            System.out.println(path);
+        }
 
-        String path = configProperties.getRootPath();
+
         try {
             getAll(path);
         } catch (Exception e) {
@@ -263,7 +270,7 @@ public class MergerBilibili {
         try {
             InputStream inputStream = new FileInputStream(file);
             EntryBean entryBean = (EntryBean) JSONObject.parseObject(inputStream, EntryBean.class);
-//            System.out.println(entryBean);
+
             part = entryBean.getPage_data().getPart();
 
 

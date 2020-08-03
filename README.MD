@@ -1,5 +1,5 @@
 
-使用说明：
+使用前提：
     务必保证目录结构是这样的：
     ![Image text](./img/direcotry.png)
    
@@ -12,7 +12,13 @@
  
 ![Image text](./img/direcotryOne.png)
 ![Image text](./img/direcotryTwo.png)
-![Image text](./img/direcotryThree.png)~~~~~~~~
+![Image text](./img/direcotryThree.png)
+
+
+
+
+使用方法：
+    在
 
         
                 
