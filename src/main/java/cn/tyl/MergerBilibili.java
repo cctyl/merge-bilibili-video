@@ -5,17 +5,18 @@ import cn.hutool.core.date.DateUtil;
 import cn.tyl.entity.ConfigProperties;
 import cn.tyl.entity.EntryBean;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONReader;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class MergerBilibili {
 
     private static ConfigProperties configProperties;
-
+    private static ExecutorService executorService = Executors.newFixedThreadPool(5);
     static {
 
 
@@ -243,9 +244,40 @@ public class MergerBilibili {
                                     System.out.println("音频所在目录：" + videoInputPath);
                                     System.out.println("视频输出目录：" + videoOutPath);
 
-//                                    //开始合成
-                                    if (!videoInputPath.equals(""))
-                                        convetor(videoInputPath, audioInputPath, videoOutPath);
+                                    //开始合成
+                                    if (!videoInputPath.equals("")){
+
+                                        executorService.execute(new Runnable() {
+
+                                            private String videoInputPath;
+                                            private String audioInputPath;
+                                            private String videoOutPath;
+
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    convetor(videoInputPath, audioInputPath, videoOutPath);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+
+                                            public Runnable accept(String videoInputPath,String audioInputPath, String videoOutPath){
+
+                                                this.videoInputPath =videoInputPath;
+                                                this.videoOutPath = videoOutPath;
+                                                this.audioInputPath = audioInputPath;
+                                                return this;
+                                            }
+
+
+                                        }.accept(videoInputPath,audioInputPath,videoOutPath));
+
+
+//
+                                    }
+
 
 
                                 }
