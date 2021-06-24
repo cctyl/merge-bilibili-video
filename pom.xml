@@ -38,7 +38,7 @@
     <build>
         <!--maven插件-->
         <plugins>
-            <!--jdk编译插件-->
+<!--            &lt;!&ndash;jdk编译插件&ndash;&gt;
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -47,7 +47,8 @@
                     <target>1.8</target>
                     <encoding>utf-8</encoding>
                 </configuration>
-            </plugin>
+                <version>3.6.0</version>
+            </plugin>-->
             <!--tomcat插件-->
 
             <plugin>

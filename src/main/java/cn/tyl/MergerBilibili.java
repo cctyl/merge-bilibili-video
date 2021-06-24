@@ -50,8 +50,6 @@ public class MergerBilibili {
 
 
 
-
-
         try {
             getAll(path);
         } catch (Exception e) {
@@ -59,9 +57,6 @@ public class MergerBilibili {
         }
 
     }
-
-
-
 
 
 
@@ -198,7 +193,7 @@ public class MergerBilibili {
                             }
 
                             //设置最终合并文件的位置
-                            videoOutPath = outputPath + "\\" + videoTitle + ".mp4";
+                            videoOutPath = outputPath + "/" + videoTitle + ".mp4";
 
 
                             for (File fileTwo : fileTwoList) {
@@ -329,7 +324,7 @@ public class MergerBilibili {
     public static String getOutputPath(File file) {
 
         String absolutePath = file.getAbsolutePath();
-        absolutePath += "\\output";
+        absolutePath += "/output";
 
         File outputPath = new File(absolutePath);
         if (!outputPath.exists()) {
